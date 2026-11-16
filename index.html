@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111720">
+  <title>Três Letras — corrida de anagramas</title>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <style>
+    :root{color-scheme:dark;--bg:#111720;--panel:#19222e;--panel2:#202c39;--line:#314153;--ink:#edf4f3;--muted:#9aa9b5;--mint:#9df2c5;--pink:#ff9db6;--yellow:#f7d779;--blue:#a8c8ff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#283c4a 0,transparent 55%),var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;justify-content:center;padding:30px 16px 50px}
+    button,input{font:inherit}button{cursor:pointer}.shell{width:min(100%,920px)}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.04em}.logo{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--mint);color:#10211c;font-weight:950;box-shadow:0 8px 24px #9df2c533}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:650;letter-spacing:.14em;text-transform:uppercase}.pill{border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--muted);font-size:13px}.pill.online{color:var(--mint);border-color:#456c59}
+    main{min-height:520px}.screen{animation:in .24s ease}@keyframes in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}.hero{padding:30px 0 25px;max-width:650px}.eyebrow{color:var(--mint);font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.hero h1{font-size:clamp(40px,8vw,76px);line-height:.98;letter-spacing:-.065em;margin:13px 0 17px}.hero p{max-width:530px;color:var(--muted);font-size:18px;margin:0}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:linear-gradient(160deg,#202c39,#19222e 80%);border:1px solid var(--line);border-radius:20px;padding:22px}.card h2,.card h3{margin:0 0 9px;letter-spacing:-.02em}.card p{color:var(--muted);margin:0 0 18px}.field{display:grid;gap:7px;margin:0 0 14px}.field label{font-size:13px;color:var(--muted);font-weight:650}.field input{width:100%;border:1px solid var(--line);background:#101721;color:var(--ink);border-radius:12px;padding:12px 13px;outline:none}.field input:focus{border-color:var(--mint);box-shadow:0 0 0 3px #9df2c51a}.btn{border:1px solid var(--line);border-radius:12px;padding:11px 15px;color:var(--ink);background:#263442;font-weight:750;transition:.15s}.btn:hover{transform:translateY(-1px);border-color:#678099}.btn.primary{background:var(--mint);border-color:var(--mint);color:#10211c}.btn.primary:hover{background:#b7f9d4}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.actions{display:flex;gap:10px;flex-wrap:wrap}.note{font-size:13px;color:var(--muted);margin-top:14px}.error{color:var(--pink)!important;margin:12px 0 0!important}.joinline{display:flex;gap:8px}.joinline input{min-width:0;flex:1}
+    .room-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}.room-top h1{font-size:clamp(30px,5vw,45px);letter-spacing:-.055em;margin:5px 0}.room-top p{color:var(--muted);margin:0}.share{display:flex;gap:8px;align-items:center;max-width:100%}.share input{width:min(42vw,340px);font-size:12px}.players{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 20px}.player{border:1px solid var(--line);background:#17212c;border-radius:15px;padding:14px;min-height:94px}.player .name{font-weight:800;display:flex;align-items:center;gap:7px;overflow-wrap:anywhere}.player .meta{color:var(--muted);font-size:12px;margin-top:7px}.dot{width:8px;height:8px;border-radius:50%;background:#677582;display:inline-block}.dot.on{background:var(--mint);box-shadow:0 0 8px #9df2c5aa}.how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.how div{padding:14px;border-radius:14px;background:#131b25;border:1px solid #293645;color:var(--muted);font-size:13px}.how strong{display:block;color:var(--ink);font-size:14px;margin-bottom:5px}
+    .gamegrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,.8fr);gap:14px}.puzzle{text-align:center;padding:30px 22px;min-height:370px;display:flex;flex-direction:column;align-items:center;justify-content:center}.roundline{display:flex;align-items:center;justify-content:space-between;width:100%;color:var(--muted);font-size:13px}.timer{font-variant-numeric:tabular-nums;color:var(--yellow);font-weight:800}.timer.low{color:var(--pink)}.scramble{font-size:clamp(42px,10vw,78px);letter-spacing:.14em;font-weight:950;margin:24px 0 6px;color:var(--mint);text-shadow:0 5px 28px #9df2c51e}.clue{color:var(--muted);font-size:16px;margin:0 0 23px}.answerbox{display:flex;gap:8px;width:min(100%,410px)}.answerbox input{min-width:0;flex:1;border:1px solid var(--line);background:#101721;color:var(--ink);border-radius:12px;padding:12px 14px;text-transform:uppercase;letter-spacing:.08em;outline:none}.answerbox input:focus{border-color:var(--mint)}.feedback{height:24px;margin:11px 0 0;font-size:14px;color:var(--muted)}.feedback.good{color:var(--mint)}.feedback.bad{color:var(--pink)}.sidebar h3{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}.scorelist{display:grid;gap:8px}.scoreitem{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 12px;background:#141d27;border-radius:12px}.scoreitem.me{border:1px solid #517262}.scoreitem .score{font-size:20px;font-weight:900;color:var(--mint);font-variant-numeric:tabular-nums}.statusline{font-size:12px;color:var(--muted);margin-top:12px;min-height:18px}.reveal{text-align:center;padding:28px}.answerbig{font-size:clamp(32px,7vw,56px);color:var(--mint);font-weight:950;letter-spacing:.1em;margin:13px 0}.resultorder{margin:15px auto 20px;max-width:410px;display:grid;gap:7px;text-align:left}.resultrow{padding:9px 12px;background:#141d27;border-radius:10px;display:flex;justify-content:space-between}.winner{border-color:#69805d;background:linear-gradient(145deg,#293a36,#1b2928)}.winner-title{font-size:38px;letter-spacing:-.05em;margin:10px 0;color:var(--mint)}.foot{text-align:center;color:#778797;font-size:12px;margin-top:20px}
+    @media(max-width:700px){body{padding:17px 12px 32px}.grid,.gamegrid{grid-template-columns:1fr}.hero{padding-top:18px}.players{grid-template-columns:1fr}.player{min-height:auto}.how{grid-template-columns:1fr}.room-top{display:block}.share{margin-top:14px}.share input{width:100%;flex:1}.puzzle{min-height:330px;padding:22px 14px}.brand small{display:none}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><div class="logo">3L</div><div>TRÊS LETRAS<small>corrida de anagramas</small></div></div>
+      <div id="connectionPill" class="pill">Pronto para jogar</div>
+    </header>
+    <main id="app" aria-live="polite"></main>
+    <div class="foot">Uma sala privada • 3 jogadores • 8 rodadas</div>
+  </div>
+  <script>
+    const rounds = [
+      {mix:"SOTAG", answer:"GATOS", clue:"Animal doméstico que ronrona."},
+      {mix:"LANEJA", answer:"JANELA", clue:"Abre para deixar a luz entrar."},
+      {mix:"TRAPIA", answer:"PIRATA", clue:"Navega em busca de tesouros."},
+      {mix:"TAMETO", answer:"TOMATE", clue:"Vai na salada e também vira molho."},
+      {mix:"JACURO", answer:"CORUJA", clue:"Ave associada à noite."},
+      {mix:"LENAPA", answer:"PANELA", clue:"Vai ao fogo para cozinhar."},
+      {mix:"TEUFEGO", answer:"FOGUETE", clue:"Veículo que decola para o espaço."},
+      {mix:"VERUICHO", answer:"CHUVEIRO", clue:"Sai água para o banho."}
+    ];
+    const app = document.getElementById('app');
+    const pill = document.getElementById('connectionPill');
+    let peer = null, role = null, conn = null, selfId = null, myName = '', invite = '';
+    let state = {phase:'home', players:[], roundIndex:-1, secondsLeft:40, submissions:{}, correctOrder:[], answer:null};
+    let tickTimer = null;
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const clean = s => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z]/g,'');
+    const currentRound = () => rounds[state.roundIndex] || null;
+    const player = id => state.players.find(p=>p.id===id);
+    function setPill(text, online=false){pill.textContent=text;pill.className='pill'+(online?' online':'');}
+    function shortId(id){return id ? id.slice(-6).toUpperCase() : '------';}
+    function render(){
+      const phase=state.phase;
+      if(phase==='home'){renderHome();return}
+      if(phase==='lobby'){renderLobby();return}
+      if(phase==='playing'){renderPlaying();return}
+      if(phase==='reveal'){renderReveal();return}
+      if(phase==='finished'){renderFinished();return}
+    }
+    function renderHome(){
+      const roomFromUrl=new URLSearchParams(location.search).get('room')||'';
+      app.innerHTML=`<section class="screen">
+        <div class="hero"><div class="eyebrow">Jogo rápido para três</div><h1>Desembaralhe.<br>Seja o primeiro.</h1><p>Uma corrida de palavras contra seus amigos. Entre na sala pelo navegador, descubra o anagrama e some pontos antes do tempo acabar.</p></div>
+        <div class="grid">
+          <section class="card"><h2>Criar sala</h2><p>Você será o anfitrião e também joga.</p>
+            <div class="field"><label for="nameCreate">Seu nome</label><input id="nameCreate" maxlength="18" placeholder="Ex.: Bia" autocomplete="nickname"></div>
+            <button class="btn primary" data-action="create">Criar sala</button>
+          </section>
+          <section class="card"><h2>Entrar na sala</h2><p>Abra o link que o anfitrião compartilhou na call.</p>
+            <div class="field"><label for="nameJoin">Seu nome</label><input id="nameJoin" maxlength="18" placeholder="Ex.: Rafa" autocomplete="nickname"></div>
+            <div class="field"><label for="roomInput">Código da sala</label><div class="joinline"><input id="roomInput" value="${esc(roomFromUrl)}" placeholder="Cole o código ou link" autocomplete="off"><button class="btn primary" data-action="join">Entrar</button></div></div>
+          </section>
+        </div><p class="note" id="homeError">Cada rodada dura até 40 segundos. Acerto mais rápido vale mais pontos.</p>
+      </section>`;
+    }
+    function roomCards(){
+      const list=[...state.players];
+      while(list.length<3) list.push(null);
+      return list.map((p,i)=>`<div class="player"><div class="name"><span class="dot ${p&&p.connected!==false?'on':''}"></span>${p?esc(p.name)+(p.id===selfId?' (você)':''):'Aguardando jogador…'}</div><div class="meta">${p?(p.isHost?'Anfitrião':'Jogador'):'Compartilhe o link da sala'}</div></div>`).join('');
+    }
+    function renderLobby(){
+      const host=role==='host';
+      app.innerHTML=`<section class="screen">
+        <div class="room-top"><div><div class="eyebrow">Sala ${shortId(state.roomId||selfId)}</div><h1>Reúna a equipe</h1><p>${state.players.length}/3 jogadores conectados${host?' • você pode começar quando todos entrarem':' • esperando o anfitrião começar'}</p></div></div>
+        ${host?`<div class="card"><h3>Link para compartilhar na call</h3><div class="share"><input id="inviteLink" readonly value="${esc(invite)}"><button class="btn" data-action="copy">Copiar link</button></div><div class="note" id="copyNote">O link leva seus amigos direto para esta sala.</div></div>`:''}
+        <div class="players">${roomCards()}</div>
+        <div class="card"><div class="how"><div><strong>1. Leia as letras</strong>Elas estão fora de ordem.</div><div><strong>2. Digite a palavra</strong>Você tem uma tentativa por rodada.</div><div><strong>3. Corra pelo placar</strong>3, 2 ou 1 ponto por ordem de acerto.</div></div>
+          <div class="actions" style="margin-top:17px">${host?`<button class="btn primary" data-action="start" ${state.players.length===3?'':'disabled'}>Começar partida</button>`:`<span class="note">Quando os três estiverem conectados, o anfitrião inicia.</span>`}<button class="btn" data-action="leave">Sair da sala</button></div>
+          ${state.error?`<p class="error">${esc(state.error)}</p>`:''}
+        </div>
+      </section>`;
+      setPill('Sala aberta',true);
+    }
+    function scoreList(){return state.players.map(p=>`<div class="scoreitem ${p.id===selfId?'me':''}"><div><strong>${esc(p.name)}${p.id===selfId?' · você':''}</strong><div class="meta">${state.submissions[p.id]?(state.submissions[p.id].correct?'Acertou':'Já tentou'):'Pensando'}</div></div><div class="score">${p.score||0}</div></div>`).join('');}
+    function renderPlaying(){
+      const q=currentRound();if(!q)return;
+      const submitted=!!state.submissions[selfId];
+      app.innerHTML=`<section class="screen"><div class="gamegrid">
+        <section class="card puzzle"><div class="roundline"><span>RODADA ${state.roundIndex+1} / ${rounds.length}</span><span class="timer" id="timer">00:${String(state.secondsLeft).padStart(2,'0')}</span></div>
+          <div class="scramble" aria-label="Letras embaralhadas">${q.mix}</div><p class="clue">${q.clue}</p>
+          <form id="answerForm" class="answerbox"><input id="answerInput" maxlength="16" autocomplete="off" autocapitalize="characters" placeholder="Sua resposta" aria-label="Sua resposta" ${submitted?'disabled':''}><button class="btn primary" ${submitted?'disabled':''}>Enviar</button></form>
+          <div id="feedback" class="feedback ${submitted?(state.submissions[selfId].correct?'good':'bad'):''}">${submitted?(state.submissions[selfId].correct?'Resposta certa!':`Tentativa usada: ${esc(state.submissions[selfId].text)}`):'Uma tentativa nesta rodada.'}</div>
+        </section>
+        <aside class="card sidebar"><h3>Placar ao vivo</h3><div class="scorelist">${scoreList()}</div><div class="statusline">Primeiro acerto: 3 pts · segundo: 2 pts · terceiro: 1 pt</div></aside>
+      </div></section>`;
+      setPill('Partida em andamento',true);
+      const input=document.getElementById('answerInput');if(input&&!submitted)input.focus();
+    }
+    function renderReveal(){
+      const q=currentRound();const correct=state.correctOrder.map((id,i)=>{const p=player(id);return `<div class="resultrow"><span>${i+1}. ${esc(p?.name||'Jogador')}</span><strong>+${[3,2,1][i]} pts</strong></div>`}).join('');
+      app.innerHTML=`<section class="screen card reveal"><div class="eyebrow">Rodada ${state.roundIndex+1} concluída</div><h1>Resposta</h1><div class="answerbig">${esc(q?.answer||state.answer||'—')}</div><p class="note">${correct?'Ordem de chegada':'Ninguém acertou a tempo.'}</p><div class="resultorder">${correct||'<div class="resultrow"><span>Sem pontos nesta rodada</span><strong>0</strong></div>'}</div><div class="scorelist" style="max-width:410px;margin:0 auto 18px">${scoreList()}</div>${role==='host'?`<button class="btn primary" data-action="next">${state.roundIndex===rounds.length-1?'Ver resultado final':'Próxima rodada'}</button>`:`<div class="note">Aguardando o anfitrião avançar…</div>`}</section>`;
+      setPill('Fim da rodada',true);
+    }
+    function renderFinished(){
+      const sorted=[...state.players].sort((a,b)=>(b.score||0)-(a.score||0));const top=sorted[0];const ties=sorted.filter(p=>(p.score||0)===(top?.score||0));
+      app.innerHTML=`<section class="screen card reveal winner"><div class="eyebrow">Partida encerrada</div><h1 class="winner-title">${ties.length>1?'Deu empate!':`${esc(top?.name||'')} venceu!`}</h1><p>Boa corrida. Este é o placar final:</p><div class="resultorder">${sorted.map((p,i)=>`<div class="resultrow"><span>${i+1}. ${esc(p.name)}</span><strong>${p.score||0} pts</strong></div>`).join('')}</div>${role==='host'?`<button class="btn primary" data-action="replay">Jogar de novo</button>`:''}</section>`;
+      setPill('Partida encerrada',true);
+    }
+    function setHomeError(message){const el=document.getElementById('homeError');if(el){el.textContent=message;el.className='note error'}else alert(message)}
+    function initPeer(onOpen){
+      if(typeof Peer==='undefined'){setHomeError('Não foi possível carregar a conexão do jogo. Confira a internet e atualize a página.');return}
+      peer=new Peer();peer.on('open',id=>{selfId=id;onOpen(id)});
+      peer.on('error',err=>{console.error(err);const msg=err.type==='peer-unavailable'?'Sala não encontrada. Peça um link novo ao anfitrião.':'Conexão falhou. Atualize a página e tente novamente.';state.error=msg;if(state.phase==='home')setHomeError(msg);else render()});
+      peer.on('disconnected',()=>setPill('Reconectando…'));
+    }
+    function createRoom(){
+      myName=(document.getElementById('nameCreate')?.value||'').trim()||'Jogador 1';
+      state={phase:'home',players:[],roundIndex:-1,secondsLeft:40,submissions:{},correctOrder:[],answer:null};role='host';setPill('Criando sala…');
+      initPeer(id=>{
+        state={phase:'lobby',roomId:id,players:[{id,name:myName,score:0,isHost:true,connected:true}],roundIndex:-1,secondsLeft:40,submissions:{},correctOrder:[],answer:null};
+        const u=new URL(location.href);u.search='';u.searchParams.set('room',id);invite=u.href;render();
+        peer.on('connection',c=>{c.on('data',msg=>hostMessage(c,msg));c.on('close',()=>{const p=player(c.peer);if(p){p.connected=false;broadcast();}});});
+      });
+    }
+    function joinRoom(){
+      const n=(document.getElementById('nameJoin')?.value||'').trim()||'Jogador';const raw=(document.getElementById('roomInput')?.value||'').trim();
+      const room=raw.includes('room=')?new URL(raw).searchParams.get('room'):raw;
+      if(!room){setHomeError('Cole o link da sala ou o código enviado pelo anfitrião.');return}
+      role='client';myName=n;setPill('Conectando…');
+      initPeer(()=>{conn=peer.connect(room,{reliable:true,serialization:'json'});conn.on('open',()=>conn.send({type:'join',name:myName}));conn.on('data',msg=>clientMessage(msg));conn.on('close',()=>{state.error='Conexão com a sala encerrada.';render()});});
+    }
+    function snapshot(){return JSON.parse(JSON.stringify(state))}
+    function broadcast(){const msg={type:'state',state:snapshot()};if(peer)for(const list of Object.values(peer.connections))for(const c of list)if(c.open)c.send(msg);render()}
+    function hostMessage(c,msg){
+      if(msg?.type==='join'){
+        const name=String(msg.name||'Jogador').slice(0,18);const existing=player(c.peer);
+        if(!existing){if(state.players.length>=3||state.phase!=='lobby'){c.send({type:'error',text:'Esta sala já está cheia ou a partida começou.'});return}state.players.push({id:c.peer,name,score:0,isHost:false,connected:true});}
+        c.send({type:'state',state:snapshot()});broadcast();return;
+      }
+      if(msg?.type==='answer'&&state.phase==='playing')receiveAnswer(c.peer,msg.text);
+    }
+    function clientMessage(msg){
+      if(msg?.type==='state'){const oldPhase=state.phase;state=msg.state;render();if(oldPhase!=='playing'&&state.phase==='playing')setPill('Partida em andamento',true)}
+      if(msg?.type==='tick'){state.secondsLeft=msg.secondsLeft;updateTimer()}
+      if(msg?.type==='error'){state.error=msg.text;render()}
+    }
+    function startRound(index){
+      clearInterval(tickTimer);
+      if(index>=rounds.length){state.phase='finished';broadcast();return}
+      state.phase='playing';state.roundIndex=index;state.secondsLeft=40;state.submissions={};state.correctOrder=[];state.answer=null;broadcast();
+      tickTimer=setInterval(()=>{if(state.phase!=='playing'){clearInterval(tickTimer);return}state.secondsLeft--;if(state.secondsLeft<=0){state.secondsLeft=0;finishRound();return}if(peer)for(const list of Object.values(peer.connections))for(const c of list)if(c.open)c.send({type:'tick',secondsLeft:state.secondsLeft});updateTimer()},1000);
+    }
+    function receiveAnswer(id,text){
+      if(state.phase!=='playing'||state.submissions[id])return;
+      const q=currentRound();const value=String(text||'').slice(0,32);const correct=clean(value)===clean(q.answer);const entry={text:value,correct};state.submissions[id]=entry;
+      if(correct){const rank=state.correctOrder.length;state.correctOrder.push(id);entry.rank=rank;entry.points=[3,2,1][rank]||0;const p=player(id);if(p)p.score=(p.score||0)+entry.points;}
+      const allDone=state.players.every(p=>state.submissions[p.id]);
+      if(allDone||state.correctOrder.length===3){finishRound();return}
+      broadcast();
+    }
+    function finishRound(){clearInterval(tickTimer);state.phase='reveal';state.answer=currentRound()?.answer||null;state.secondsLeft=0;broadcast()}
+    function submit(event){event.preventDefault();const input=document.getElementById('answerInput');if(!input||!input.value.trim())return;const text=input.value.trim();input.disabled=true;if(role==='host')receiveAnswer(selfId,text);else if(conn?.open)conn.send({type:'answer',text});const f=document.getElementById('feedback');if(f){f.className='feedback';f.textContent='Resposta enviada…'} }
+    async function copyInvite(){try{await navigator.clipboard.writeText(invite);const el=document.getElementById('copyNote');if(el)el.textContent='Link copiado. Envie na call!'}catch{const field=document.getElementById('inviteLink');field.select();document.execCommand('copy');const el=document.getElementById('copyNote');if(el)el.textContent='Link selecionado. Copie e envie na call.'}}
+    function leave(){clearInterval(tickTimer);try{conn?.close();peer?.destroy()}catch{}location.href=location.pathname}
+    document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='create')createRoom();if(a==='join')joinRoom();if(a==='copy')copyInvite();if(a==='start'&&role==='host'&&state.players.length===3)startRound(0);if(a==='next'&&role==='host')startRound(state.roundIndex+1);if(a==='replay'&&role==='host'){state.players.forEach(p=>p.score=0);startRound(0)}if(a==='leave')leave()});
+    document.addEventListener('submit',e=>{if(e.target?.id==='answerForm')submit(e)});
+    document.addEventListener('input',e=>{if(e.target?.id==='answerInput')e.target.value=e.target.value.replace(/[^a-zA-ZÀ-ÿ]/g,'').toUpperCase()});
+    function updateTimer(){const el=document.getElementById('timer');if(!el)return;el.textContent=`00:${String(state.secondsLeft).padStart(2,'0')}`;el.classList.toggle('low',state.secondsLeft<=10)}
+    render();
+  </script>
+</body>
+</html>
